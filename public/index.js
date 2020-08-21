@@ -1,3 +1,12 @@
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('.service-worker.js')
+            .then((reg) => {
+                console.log('Service worker registered.', reg);
+            });
+    })
+}
+
 let transactions = [];
 let myChart;
 
@@ -32,9 +41,9 @@ function populateTable() {
         // create and populate a table row
         let tr = document.createElement("tr");
         tr.innerHTML = `
-      <td>${transaction.name}</td>
-      <td>${transaction.value}</td>
-    `;
+        <td>${transaction.name}</td>
+        <td>${transaction.value}</td>
+      `;
 
         tbody.appendChild(tr);
     });
@@ -65,7 +74,7 @@ function populateChart() {
     let ctx = document.getElementById("myChart").getContext("2d");
 
     myChart = new Chart(ctx, {
-        type: "line",
+        type: 'line',
         data: {
             labels,
             datasets: [{
@@ -127,16 +136,12 @@ function sendTransaction(isAdding) {
             if (data.errors) {
                 errorEl.textContent = "Missing Information";
             } else {
-                // clear form
                 nameEl.value = "";
                 amountEl.value = "";
             }
         })
         .catch(err => {
-            // fetch failed, so save in indexed db
             saveRecord(transaction);
-
-            // clear form
             nameEl.value = "";
             amountEl.value = "";
         });
