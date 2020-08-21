@@ -17,4 +17,4 @@ Add functionality to the existing Budget Tracker application to allow for offlin
 * It's possible to interact with the app without a connection
 * Once the connection is restored, the accumulated data is pushed to the database
 
-![screenshot 1]</assets/images/screenshot1.png>
+![screenshot 1](/assets/images/screenshot1.png)
