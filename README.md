@@ -1,7 +1,7 @@
 # Online/Offline Budget Tracker
 
 **You can access the finished project here:
-<https://mi544.github.io/weather-dashboard/>**
+<https://onlineofflinebudgettracer.herokuapp.com/>**
 
 ---
 
