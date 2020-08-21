@@ -1,46 +1,58 @@
 let db;
 const request = indexedDB.open("budget", 1);
 
-request.onupgradeneeded = ({ target }) => {
-    db = target.result;
+request.onupgradeneeded = function(event) {
+    const db = event.target.result;
     db.createObjectStore("pending", { autoIncrement: true });
-}
+};
 
-request.onsuccess = ({ target }) => {
-    db = target.result
+request.onsuccess = function(event) {
+    db = event.target.result;
+
     if (navigator.onLine) {
         checkDatabase();
     }
-}
+};
 
-request.onerror = ({ target }) => {
-    console.log("Oops!" + target.errorCode);
-}
+request.onerror = function(event) {
+    console.log("Woops! " + event.target.errorCode);
+};
 
-const saveRecord = record => {
+function saveRecord(record) {
     const transaction = db.transaction(["pending"], "readwrite");
     const store = transaction.objectStore("pending");
     store.add(record);
 }
 
-const checkDatabase = () => {
+function checkDatabase() {
     const transaction = db.transaction(["pending"], "readwrite");
     const store = transaction.objectStore("pending");
     const getAll = store.getAll();
 
-    getAll.onsuccess = () => {
+    getAll.onsuccess = function() {
         if (getAll.result.length > 0) {
             fetch("/api/transaction/bulk", {
                     method: "POST",
-                    body: getAll.result
+                    body: JSON.stringify(getAll.result),
+                    headers: {
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json"
+                    }
                 })
+                .then(response => response.json())
                 .then(() => {
-                    const transaction = db.transaction(["pending"], "readwrite")
-                    const store = transaction.objectStore("pending")
-                    store.clear()
+                    const transaction = db.transaction(["pending"], "readwrite");
+                    const store = transaction.objectStore("pending");
+                    store.clear();
                 });
         }
     };
+}
+
+function deletePending() {
+    const transaction = db.transaction(["pending"], "readwrite");
+    const store = transaction.objectStore("pending");
+    store.clear();
 }
 
 window.addEventListener("online", checkDatabase);
